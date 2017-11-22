@@ -95,7 +95,9 @@ func handleUpdateService(w http.ResponseWriter, r *http.Request) {
 		services[0].ID,
 		services[0].Version,
 		services[0].Spec,
-		types.ServiceUpdateOptions{})
+		types.ServiceUpdateOptions{
+			QueryRegistry: true,
+		})
 	if err != nil {
 		panic(err)
 	}

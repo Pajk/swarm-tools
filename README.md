@@ -14,7 +14,7 @@ AUTH_KEY_FILE - eg. /run/secrets/swarm_tools_auth_key
 ```
 services:
     swarm-tools:
-        image: pajk/swarm-tools:0.1.0
+        image: pajk/swarm-tools:0.2.0
         environment:
             AUTH_KEY: XYZ
             WHITELIST: helloworld,dev_api,dev_web
