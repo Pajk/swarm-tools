@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/filters"
@@ -65,6 +66,7 @@ func handleUpdateService(w http.ResponseWriter, r *http.Request) {
 	// get params
 	name := r.FormValue("name")
 	image := r.FormValue("image")
+	commit := r.FormValue("commit")
 
 	if r.Method != "POST" || name == "" || image == "" {
 		http.Error(w, "POST attributes 'name' and 'image' are requried", http.StatusUnprocessableEntity)
@@ -89,8 +91,13 @@ func handleUpdateService(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// update service image
+	// update service spec
 	services[0].Spec.TaskTemplate.ContainerSpec.Image = image
+	services[0].Spec.TaskTemplate.ContainerSpec.Labels["last_deploy"] = time.Now().Format(time.RFC3339)
+	services[0].Spec.TaskTemplate.ContainerSpec.Labels["commit_hash"] = commit
+	services[0].Spec.Labels["commit_hash"] = commit
+	services[0].Spec.Labels["last_deploy"] = time.Now().Format(time.RFC3339)
+
 	response, err := cli.ServiceUpdate(context.Background(),
 		services[0].ID,
 		services[0].Version,
